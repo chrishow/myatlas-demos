@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html class="no-js production" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyAtlas Phone with Country Code Demo</title>
+    <!-- <link rel="icon" href="/img/favicon.ico" type="image/ico" sizes="16x16"/> -->
+
+    <meta name="theme-color" content="#595478">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://myatlas.atlasoceanvoyages.com/css/all.1742925302.min.css" />
+
+
+    <!-- International Telephone Input -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@25.12.5/build/css/intlTelInput.css">
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@25.12.5/build/js/intlTelInput.min.js"></script>
+
+    <style>
+        html {
+            background-color: white;
+        }
+
+        main {
+            height: 100vh;
+        }
+
+        .iti {
+            display: block;
+        }
+
+        .iti__search-input {
+            padding-block: 8px;
+        }
+
+
+        .form-group:has(input.is-invalid) .invalid-feedback {
+            display: block;
+        }
+
+        .has-validated-message {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            margin-left: 15px;
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+
+</head>
+
+<body>
+    <main>
+        <div class="content">
+            <h3>MyAtlas Phone with Country Code Component Demo</h3>
+
+            <form>
+
+                <div class="form-group">
+                    <label for="demo1">Blank field (normal case)</label>
+                    <input type="text" class="form-control" id="demo1" name="demo1" value="">
+                    <div class="invalid-feedback">This field is required</div>
+                </div>
+
+                <button name="action" value="next" class="btn btn-primary">Test number validity</button>
+                <span class="has-validated-message">Number is valid</span>
+                <hr>
+
+                <div class="form-group">
+                    <label for="demo6">Field prefilled with "+1 618-616-0134"</label>
+                    <input type="text" class="form-control" id="demo6" name="demo6" value="+1 618-616-0134">
+                    <div class="invalid-feedback">This field is required</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="demo8">Field prefilled with "+16186160134"</label>
+                    <input type="text" class="form-control" id="demo8" name="demo8" value="+16186160134">
+                    <div class="invalid-feedback">This field is required</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="demo7">Field prefilled with "001 618-616-0134"</label>
+                    <input type="text" class="form-control" id="demo7" name="demo7" value="001 618-616-0134">
+                    <div class="invalid-feedback">This field is required</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="demo2">Field prefilled with "18444428527"</label>
+                    <input type="text" class="form-control" id="demo2" name="demo2" value="18444428527">
+                    <div class="invalid-feedback">This field is required</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="demo3">Field prefilled with "1.844.442.8527"</label>
+                    <input type="text" class="form-control" id="demo3" name="demo3" value="1.844.442.8527">
+                    <div class="invalid-feedback">This field is required</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="demo4">Field prefilled with "+34657456789"</label>
+                    <input type="text" class="form-control" id="demo4" name="demo4" value="+34657456789">
+                    <div class="invalid-feedback">This field is required</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="demo5">Field prefilled with "+34 657 45 67 89"</label>
+                    <input type="text" class="form-control" id="demo5" name="demo5" value="+34 657 45 67 89">
+                    <div class="invalid-feedback">This field is required</div>
+                </div>
+
+
+
+            </form>
+        </div>
+    </main>
+
+    <script>
+        const inputs = document.querySelectorAll("input[type='text']");
+
+        inputs.forEach(input => {
+            input.iti = window.intlTelInput(input, {
+                loadUtils: () => import("https://cdn.jsdelivr.net/npm/intl-tel-input@25.12.5/build/js/utils.js"),
+                // separateDialCode: true,
+                autoPlaceholder: "off",
+                countryOrder: ["us"],
+                validationNumberTypes: null,
+                // initialCountry: "us",
+            });
+            input.addEventListener('change', () => {
+                console.log(input.value);
+            });
+        });
+
+
+        const validateButton = document.querySelector("button[name='action']");
+
+        const input = document.querySelector('#demo1');
+
+        const changeEvents = ['change', 'blur', 'keyup', 'paste', 'input', 'countrychange'];
+        changeEvents.forEach(event => {
+            input.addEventListener(event, () => {
+                console.log(`Event ${event} fired:`, input.value);
+                input.classList.remove("is-invalid");
+            });
+        });
+
+        const errorMap = ["Invalid number", "Please specify the country", "Too short", "Too long", "Invalid number"];
+
+        validateButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            validateButton.blur();
+
+
+            if (input.value.trim() === "") {
+                input.classList.add("is-invalid");
+                input.closest('.form-group').querySelector('.invalid-feedback').textContent = "This field is required";
+            } else {
+                // Check that the number starts with a + country code
+                const number = input.iti.getNumber();
+                console.log("Validating number:", number);
+
+                if (input.iti.isValidNumber()) {
+                    input.classList.remove("is-invalid");
+                    const validMessage = document.querySelector('.has-validated-message');
+                    validMessage.style.opacity = '1';
+                    setTimeout(() => {
+                        validMessage.style.opacity = '0';
+                    }, 2000);
+                } else {
+                    const errorCode = input.iti.getValidationError();
+                    const msg = errorMap[errorCode] || "Invalid number";
+                    input.closest('.form-group').querySelector('.invalid-feedback').textContent = msg;
+                    input.classList.add("is-invalid");
+                }
+                // if (!number.startsWith('+')) {
+                //     input.classList.add("is-invalid");
+                //     input.closest('.form-group').querySelector('.invalid-feedback').textContent = "Please include a valid country code";
+                //     return;
+                // }
+                // input.classList.remove("is-invalid");
+
+            }
+        });
+    </script>
+</body>
+
+</html>
