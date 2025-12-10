@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html class="no-js production" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyAtlas Phone with Country Code Demo</title>
+    <!-- <link rel="icon" href="/img/favicon.ico" type="image/ico" sizes="16x16"/> -->
+
+    <meta name="theme-color" content="#595478">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://myatlas.atlasoceanvoyages.com/css/all.1742925302.min.css" />
+
+
+
+    <style>
+        html {
+            background-color: white;
+        }
+
+        main {
+            height: 100vh;
+        }
+
+
+        /* Size chart links */
+        .size-chart-wrapper {
+
+            select {
+                display: inline-block;
+                margin-right: 1em;
+            }
+
+            a {
+                font-size: 0.9em;
+
+                &::after {
+                    content: '';
+                    display: inline-block;
+                    background-image: url("data:image/svg+xml;utf8,<svg fill='%23000000' viewBox='0 0 36 36' version='1.1' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'><g id='SVGRepo_bgCarrier' stroke-width='0'></g><g id='SVGRepo_tracerCarrier' stroke-linecap='round' stroke-linejoin='round'></g><g id='SVGRepo_iconCarrier'> <title>pop-out-line</title> <path class='clr-i-outline clr-i-outline-path-1' d='M27,33H5a2,2,0,0,1-2-2V9A2,2,0,0,1,5,7H15V9H5V31H27V21h2V31A2,2,0,0,1,27,33Z'></path><path class='clr-i-outline clr-i-outline-path-2' d='M18,3a1,1,0,0,0,0,2H29.59L15.74,18.85a1,1,0,1,0,1.41,1.41L31,6.41V18a1,1,0,0,0,2,0V3Z'></path> <rect x='0' y='0' width='36' height='36' fill-opacity='0'></rect> </g></svg>");
+                    width: 0.8em;
+                    height: 0.8em;
+                    margin-left: 0.2em;
+                }
+            }
+        }
+
+        /* Size chart modals */
+        #parka-size-modal,
+        #boot-size-modal {
+
+            .modal-dialog {
+                max-width: 95%;
+                width: fit-content;
+            }
+
+            .chart-container {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0 auto;
+                color: #333;
+                background-color: #fff;
+                min-width: 500px;
+            }
+
+            /* Header Section */
+            .chart-header {
+                padding-bottom: 20px;
+            }
+
+            .chart-header h3 {
+                margin-top: 0;
+                text-transform: uppercase;
+                font-size: 16px;
+                font-weight: 800;
+            }
+
+            .instruction-item {
+                margin-bottom: 8px;
+                font-size: 14px;
+                line-height: 1.4;
+            }
+
+            .instruction-label {
+                font-weight: bold;
+            }
+
+            /* Section styling (Regular vs Apple) */
+            .shape-section {
+                margin-bottom: 40px;
+            }
+
+            .shape-title {
+                font-size: 18px;
+                font-weight: 800;
+                text-transform: uppercase;
+                margin-bottom: 15px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                /* HIDE FOR NOW */
+                display: none;
+
+            }
+
+            /* The green outline icon representation */
+            .shape-icon {
+                width: 5em;
+                height: auto;
+                /* The green from the image */
+                display: inline-block;
+            }
+
+            /* Visual tweak for Apple shape icon */
+            .shape-icon.apple {
+                border-bottom-left-radius: 15px;
+                border-bottom-right-radius: 15px;
+            }
+
+            /* Table Wrapper for Mobile Scrolling */
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                /* Smooth scroll on iOS */
+            }
+
+            /* Table Styling */
+            .size-table {
+                max-width: 100%;
+                width: 100%;
+                border-collapse: collapse;
+                /* Forces scroll on small screens */
+                font-size: 14px;
+            }
+
+            .size-table th,
+            .size-table td {
+                padding: 12px 8px;
+                text-align: center;
+                border: 1px solid #666;
+                white-space: nowrap;
+            }
+
+            .size-table th.blank {
+                border: none;
+                background-color: transparent;
+            }
+
+            /* Header Row */
+            .size-table thead th {
+                background-color: #f8f8f8;
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+
+            /* First Column (Labels) styling */
+            .size-table tbody th {
+                text-align: left;
+                background-color: #fcfcfc;
+                font-weight: 600;
+                color: #444;
+            }
+
+            .scroll-indicators {
+                margin-top: 0.25em;
+                display: flex;
+                justify-content: space-between;
+
+                a {
+                    text-decoration: none;
+                    font-size: 20px;
+                    color: #666;
+
+                    &:hover {
+                        color: #333;
+                    }
+
+                    &.left {
+                        visibility: hidden;
+                    }
+                }
+            }
+
+            /* Alternating row colors for readability */
+            .size-table tbody tr:nth-child(even) {
+                background-color: #fafafa;
+            }
+
+            /* Mobile adjustments */
+            @media (max-width: 600px) {
+                .modal-dialog {
+                    max-width: 96%;
+                    width: 96%;
+                }
+
+                .chart-container {
+                    min-width: 100%;
+                }
+
+                .size-table tbody th {
+                    font-size: 12px;
+                }
+
+                .size-table td {
+                    font-size: 13px;
+                    /* Prevents measurements breaking into two lines */
+                }
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <main>
+        <div class="content">
+            <h3>MyAtlas Size Charts Demo</h3>
+
+            <h5 class=top-space>
+                Parka & Waterproof Boot Size
+            </h5>
+
+            <p>
+                <b>For guests joining us on one of our Polar Expeditions</b>, please provide your parka size (yours to
+                keep) and boot size (on loan for your expedition).
+            </p>
+
+            <div class="form-group">
+                <label for="PERSON[PERSON_PREFERENCES][PARKA_SIZE]">Parka Size (Unisex)</label>
+                <select class="form-control select" id="PERSON[PERSON_PREFERENCES][PARKA_SIZE]"
+                    name="PERSON[PERSON_PREFERENCES][PARKA_SIZE]">
+                    <option style='display:none;' value=''>Please select...</option>
+                    <option value="S">Small</option>
+                    <option value="M">Medium</option>
+                    <option value="L" selected>Large</option>
+                    <option value="XL">X Large</option>
+                    <option value="2XL">2X Large</option>
+                    <option value="3XL">3X Large</option>
+                </select>
+                <small class='form-text text-muted'>Atlas Ocean Voyages will make every effort to provide the parka in
+                    your requested size. However, due to the logistical challenges of our unique destinations, we may
+                    not always be able to accommodate specific size requests. If you elect not to keep the alternative
+                    size provided, we will offer a $100.00 per person non-refundable onboard credit as a gesture of
+                    goodwill. Please notify the reception desk of your decision. Please note parkas cannot be
+                    shipped.</small>
+                <div class=invalid-feedback>This field is required</div>
+            </div>
+
+
+            <div class="form-group">
+                <label for="PERSON[PERSON_PREFERENCES][BOOT_SIZE]">Waterproof Boot Size</label>
+                <select class="form-control select" id="PERSON[PERSON_PREFERENCES][BOOT_SIZE]"
+                    name="PERSON[PERSON_PREFERENCES][BOOT_SIZE]">
+                    <option style='display:none;' value=''>Please select...</option>
+                    <option value="w4">Women’s Size 4</option>
+                    <option value="w5">Women’s Size 5</option>
+                    <option value="w6">Women’s Size 6</option>
+                    <option value="w7">Women’s Size 7</option>
+                    <option value="w8">Women’s Size 8</option>
+                    <option value="w9">Women’s Size 9</option>
+                    <option value="w10">Women’s Size 10</option>
+                    <option value="w11">Women’s Size 11</option>
+                    <option value="w12">Women’s Size 12</option>
+                    <option value="m6">Men’s Size 6</option>
+                    <option value="m7">Men’s Size 7</option>
+                    <option value="m8">Men’s Size 8</option>
+                    <option value="m9">Men’s Size 9</option>
+                    <option value="m10" selected>Men’s Size 10</option>
+                    <option value="m11">Men’s Size 11</option>
+                    <option value="m12">Men’s Size 12</option>
+                    <option value="m13">Men’s Size 13</option>
+                    <option value="m14">Men’s Size 14</option>
+                    <option value="m15">Men’s Size 15</option>
+                    <option value="m16">Men’s Size 16</option>
+                </select>
+                <small class='form-text text-muted'>Sizes are US standard. Use the size chart to convert from other
+                    sizing systems.</small>
+                <div class=invalid-feedback>This field is required</div>
+            </div>
+
+
+        </div>
+    </main>
+
+    <script src="https://myatlas.atlasoceanvoyages.com/js/jquery-3.6.0.min.js"></script>
+
+    <script src="https://myatlas.atlasoceanvoyages.com/js/jquery-migrate-1.4.1.min.js"></script>
+    <script src="https://myatlas.atlasoceanvoyages.com/js/bootstrap.bundle.min.js"></script>
+    <script src="https://myatlas.atlasoceanvoyages.com/js/plugins.1623945207.js"></script>
+    <script src="https://myatlas.atlasoceanvoyages.com/js/scripts.1765351036.js"></script>
+
+
+    <script src="size-charts.js"></script>
+
+    <!-- Parka Size Modal -->
+    <div class="modal fade" id="parka-size-modal" tabindex="-1" data-toggle="modal" aria-labelledby="modalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Parka Size Chart</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="chart-container">
+
+                        <!-- Measuring Instructions -->
+                        <div class="chart-header">
+                            <h3>How to Measure:</h3>
+                            <div class="instruction-item">
+                                <span class="instruction-label">CHEST:</span> Measure the circumference around the
+                                fullest part of the chest, under your arms.
+                            </div>
+                            <div class="instruction-item">
+                                <span class="instruction-label">WAIST:</span> Measure the circumference around the
+                                narrowest part of your waist.
+                            </div>
+                        </div>
+
+                        <!-- Regular Shape Table -->
+                        <div class="shape-section">
+                            <div class="shape-title">
+                                <!-- <img src="{{ asset('i/regular-body.svg') }}" alt="Regular Shape" class="shape-icon"> -->
+                                Regular Shape
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="size-table">
+                                    <thead>
+                                        <tr>
+                                            <th class=blank>&nbsp;</th>
+                                            <th>Chest</th>
+                                            <th>Waist</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th>Small</th>
+                                            <td>92 - 97cm<br>36 - 38"</td>
+                                            <td>79 - 85cm<br>31 - 33.5"</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Medium</th>
+                                            <td>98 - 103cm<br>38.5 - 40.5"</td>
+                                            <td>85 - 91cm<br>33.5 - 36"</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Large</th>
+                                            <td>104 - 109cm<br>41 - 43"</td>
+                                            <td>91 - 96cm<br>36 - 38"</td>
+                                        </tr>
+                                        <tr>
+                                            <th>X Large</th>
+                                            <td>110 - 115cm<br>43.5 - 45"</td>
+                                            <td>97 - 103cm<br>38.5 - 40.5"</td>
+                                        </tr>
+                                        <tr>
+                                            <th>2X Large</th>
+                                            <td>116 - 121cm<br>45.5 - 47.5"</td>
+                                            <td>103 - 109cm<br>40.5 - 43"</td>
+                                        </tr>
+                                        <tr>
+                                            <th>3X Large</th>
+                                            <td>122 - 127cm<br>48 - 50"</td>
+                                            <td>109 - 115cm<br>43 - 45"</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Boot Size Modal -->
+    <div class="modal fade" id="boot-size-modal" tabindex="-1" data-toggle="modal" aria-labelledby="modalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Boot Size Chart</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="chart-container">
+
+                        <!-- Men's sizes -->
+                        <div class="shape-section">
+                            <h3>Women’s sizes</h3>
+
+                            <div class="table-responsive">
+                                <table class="size-table">
+                                    <thead>
+                                        <tr>
+                                            <th>US</th>
+                                            <th>EU</th>
+                                            <th>UK</th>
+                                            <th>In</th>
+                                            <th>cm</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th>4</th>
+                                            <td>35</td>
+                                            <td>2</td>
+                                            <td>8.2</td>
+                                            <td>20.8</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>5</th>
+                                            <td>35-36</td>
+                                            <td>3</td>
+                                            <td>8.5</td>
+                                            <td>21.6</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>6</th>
+                                            <td>36-37</td>
+                                            <td>4</td>
+                                            <td>8.9</td>
+                                            <td>22.6</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>7</th>
+                                            <td>37-38</td>
+                                            <td>5</td>
+                                            <td>9.3</td>
+                                            <td>23.5</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>8</th>
+                                            <td>38-39</td>
+                                            <td>6</td>
+                                            <td>9.5</td>
+                                            <td>24.1</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>9</th>
+                                            <td>39-40</td>
+                                            <td>7</td>
+                                            <td>9.9</td>
+                                            <td>25.1</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>10</th>
+                                            <td>40-41</td>
+                                            <td>8</td>
+                                            <td>10.2</td>
+                                            <td>25.9</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>11</th>
+                                            <td>41-42</td>
+                                            <td>9</td>
+                                            <td>10.5</td>
+                                            <td>26.7</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>12</th>
+                                            <td>42-43</td>
+                                            <td>10</td>
+                                            <td>10.9</td>
+                                            <td>27.7</td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="chart-container">
+
+                        <!-- Men's sizes -->
+                        <div class="shape-section">
+                            <h3>Men’s sizes</h3>
+
+                            <div class="table-responsive">
+                                <table class="size-table">
+                                    <thead>
+                                        <tr>
+                                            <th>US</th>
+                                            <th>EU</th>
+                                            <th>UK</th>
+                                            <th>In</th>
+                                            <th>cm</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th>6</th>
+                                            <td>39</td>
+                                            <td>5.5</td>
+                                            <td>9.3</td>
+                                            <td>23.5</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>7</th>
+                                            <td>40</td>
+                                            <td>6.5</td>
+                                            <td>9.6</td>
+                                            <td>24.4</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>8</th>
+                                            <td>41</td>
+                                            <td>7.5</td>
+                                            <td>9.9</td>
+                                            <td>25.1</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>9</th>
+                                            <td>42</td>
+                                            <td>8.5</td>
+                                            <td>10.3</td>
+                                            <td>26</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>10</th>
+                                            <td>43</td>
+                                            <td>9.5</td>
+                                            <td>10.6</td>
+                                            <td>27</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>11</th>
+                                            <td>44</td>
+                                            <td>10.5</td>
+                                            <td>10.9</td>
+                                            <td>27.7</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>12</th>
+                                            <td>45</td>
+                                            <td>11.5</td>
+                                            <td>11.3</td>
+                                            <td>28.7</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>13</th>
+                                            <td>46</td>
+                                            <td>12.5</td>
+                                            <td>11.6</td>
+                                            <td>29.4</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>14</th>
+                                            <td>47</td>
+                                            <td>13.5</td>
+                                            <td>11.9</td>
+                                            <td>30.2</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>15</th>
+                                            <td>48</td>
+                                            <td>14.5</td>
+                                            <td>12.2</td>
+                                            <td>31</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>16</th>
+                                            <td>49</td>
+                                            <td>15.5</td>
+                                            <td>12.5</td>
+                                            <td>31.8</td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
